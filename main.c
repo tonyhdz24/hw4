@@ -41,6 +41,11 @@ int main()
   printf("Multi-threaded wrapper init...\n");
   Mtq mtq = mtq_new(4);
 
+  mtq_tail_put(mtq, "A");
+
+  char *testA = mtq_head_get(mtq);
+  printf("DEBUG %s\n", &*testA);
+
   printf("Multi-threaded wrapper done..\n");
 
   // =======================================
