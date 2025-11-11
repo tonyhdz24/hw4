@@ -6,6 +6,7 @@
 #include "lawn.h"
 #include "mole.h"
 #include "thread_helper.h"
+#include "mt_deq_wrapper.h"
 
 // Doubly link Queue from HW1
 #include "deq.h"
@@ -33,6 +34,16 @@ static void *consume(void *a)
 
 int main()
 {
+
+  // =======================================
+  // Testing
+  // =======================================
+  printf("Multi-threaded wrapper init...\n");
+  Mtq mtq = mtq_new(4);
+
+  printf("Multi-threaded wrapper done..\n");
+
+  // =======================================
   // Array to store arguments for produce
   void *args[2];
   // Creating a single thread queue
