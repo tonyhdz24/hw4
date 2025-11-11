@@ -77,3 +77,11 @@ extern void mtq_tail_put(Mtq mtq, Data d)
 
     pthread_mutex_unlock(&mtq->mutex_lock);
 };
+
+extern void mtq_free(Mtq mtq)
+{
+    // Deallocate internal deq
+    deq_del(mtq->deq, NULL);
+    // Deallocate mtq
+    free(mtq);
+}

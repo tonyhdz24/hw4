@@ -63,6 +63,6 @@ int main()
   thread_helper_join(n, consume_threadIDs);
   // freeing resources
   // deq_del(single_queue, 0);
-
+  mtq_free(multi_queue);
   lawn_free(lawn);
 }
