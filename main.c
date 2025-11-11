@@ -14,18 +14,18 @@
 static void *produce(void *a)
 {
   void **arg = a;
-  Deq q = (Deq)arg[0];
+  Mtq q = (Mtq)arg[0];
   Lawn l = (Lawn)arg[1];
-  deq_tail_put(q, mole_new(l, 0, 0));
+  mtq_tail_put(q, mole_new(l, 0, 0));
   return NULL;
 }
 static void *consume(void *a)
 {
   void **args = a;
 
-  Deq q = (Deq)args[0];
+  Mtq q = (Mtq)args[0];
   // Get mole at the head of the queue
-  Mole m = deq_head_get(q);
+  Mole m = mtq_head_get(q);
   // whack mole
   mole_whack(m);
 
@@ -34,31 +34,17 @@ static void *consume(void *a)
 
 int main()
 {
-
-  // =======================================
-  // Testing
-  // =======================================
-  printf("Multi-threaded wrapper init...\n");
-  Mtq mtq = mtq_new(4);
-
-  mtq_tail_put(mtq, "A");
-
-  char *testA = mtq_head_get(mtq);
-  printf("DEBUG %s\n", &*testA);
-
-  printf("Multi-threaded wrapper done..\n");
-
-  // =======================================
   // Array to store arguments for produce
   void *args[2];
   // Creating a single thread queue
-  Deq single_queue = deq_new();
+  // Deq single_queue = deq_new();
+  Mtq multi_queue = mtq_new(4);
   srandom(time(0));
   const int n = 10;
   Lawn lawn = lawn_new(0, 0);
 
   // Adding the queue & lawn to args array
-  args[0] = single_queue;
+  args[0] = multi_queue;
   args[1] = lawn;
 
   // for (int i = 1; i <= n; i++)
@@ -76,6 +62,7 @@ int main()
   thread_helper_join(n, produce_threadIDs);
   thread_helper_join(n, consume_threadIDs);
   // freeing resources
-  deq_del(single_queue, 0);
+  // deq_del(single_queue, 0);
+
   lawn_free(lawn);
 }

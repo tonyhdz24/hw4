@@ -12,7 +12,6 @@ pthread_t *thread_helper_create(int n, void *(*func)(void *), void *arg)
     // Check if malloc was successful
     if (!threadsIDs)
     {
-        // TODO user the ERROR.h to handle errors more gracefuly
         ERROR("malloc failed");
         return 0;
     }
@@ -27,6 +26,7 @@ pthread_t *thread_helper_create(int n, void *(*func)(void *), void *arg)
         if (thread_creation_status != 0)
         {
             // TODO user the ERROR.h to handle errors more gracefuly
+            ERROR("pthread_create failed");
             return 0;
         }
 
@@ -54,6 +54,3 @@ extern void thread_helper_join(int n, pthread_t *threads)
     // Free thread array from memory
     free(threads);
 }
-
-
-
