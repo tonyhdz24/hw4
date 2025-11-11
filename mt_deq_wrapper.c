@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-// TODO
 extern Mtq mtq_new(int capacity)
 {
     // Allocate memory for struct
@@ -35,24 +33,47 @@ extern Mtq mtq_new(int capacity)
 
     return mtq;
 };
+extern Data mtq_head_get(Mtq mtq)
+{
+    // 1. Lock mutex
+    if (pthread_mutex_lock(&mtq->mutex_lock) != 0)
+    {
+        ERROR("pthread_mutex_lock() Failed....");
+    }
+    // 2. while count == 0 (queue is empty)
+    while (mtq->count == 0)
+    {
+        // Wait on "not_empty" CV (releases lock while waiting)
+        pthread_cond_wait(&mtq->not_empty, &mtq->mutex_lock);
+    }
+    // 3. Get item from deq
+    Data returned_thread = deq_head_get(mtq->deq);
+    // 4. Decrement count
+    mtq->count -= 1;
+    // 5. Signal "not_full" CV (wake up a waiting producer)
+    pthread_cond_signal(&mtq->not_full);
+    // 6. Unlock mutex
+    pthread_mutex_unlock(&mtq->mutex_lock);
+    // 7. Return item
+    return returned_thread;
+}
 
-// extern Data mtq_head_get(Mtq mtq);
-// 1. Lock mutex
-// 2. while count == 0 (queue is empty)
-//      Wait on "not_empty" CV (releases lock while waiting)
-// 3. Get item from deq
-// 4. Decrement count
-// 5. Signal "not_full" CV (wake up a waiting producer)
-// 6. Unlock mutex
-// 7. Return item
+extern void mtq_tail_put(Mtq mtq, Data d)
+{
+    // 1. Lock mutex
+    pthread_mutex_lock(&mtq->mutex_lock);
+    // 2. while count >= capacity AND capacity > 0  (queue is full)
+    while (mtq->count >= mtq->capacity && mtq->capacity > 0)
+    {
+        //      Wat in "not full" CV (releases lock while waiting)
+        pthread_cond_wait(&mtq->not_full, &mtq->mutex_lock);
+    }
+    // 3. Add item to deq
+    deq_tail_put(mtq->deq, d);
+    // 4. incrmeent count
+    mtq->count += 1;
+    // 5. Signal "not_empty" CV (wake up a waiting consumer)
+    pthread_cond_signal(&mtq->not_empty);
 
-// extern void mtq_tail_put(Mtq mtq, Data d);
-// 1. Lock mutex
-// 2. while count >= capacity AND capacity > 0  (queue is full)
-//      Wat in "not full" CV (releases lock while waiting)
-// 3. Add item to deq
-// 4. incrmeent count
-// 5. Signal "not_empty" CV (wake up a waiting consumer)
-// 6. Unlock mutex
-
-// Q4 - We use while instead of IF becasue we want the thread to wait for the CV to signal. If we used IF instead then it would check and them just move on not waitng for the CV to actually signal
+    pthread_mutex_unlock(&mtq->mutex_lock);
+};

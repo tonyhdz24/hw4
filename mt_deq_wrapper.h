@@ -1,6 +1,8 @@
 #include "deq.h"
 #include "error.h"
 #include <pthread.h>
+
+// Multi threaded queue struct declaration
 typedef struct Mtq
 {
     Deq deq;
