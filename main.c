@@ -47,22 +47,15 @@ int main()
   args[0] = multi_queue;
   args[1] = lawn;
 
-  // for (int i = 1; i <= n; i++)
-  // {
-  //   Old code
-  //   produce(args);
-  //   consume(args);
-  // }
-  // New
-  // Creating produce threads
+  // Creating threads
   pthread_t *produce_threadIDs = thread_helper_create(n, produce, args);
-  // Creating consume threads
   pthread_t *consume_threadIDs = thread_helper_create(n, consume, args);
 
+  // Joining threads
   thread_helper_join(n, produce_threadIDs);
   thread_helper_join(n, consume_threadIDs);
+
   // freeing resources
-  // deq_del(single_queue, 0);
   mtq_free(multi_queue);
   lawn_free(lawn);
 }

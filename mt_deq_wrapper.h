@@ -13,10 +13,8 @@ typedef struct Mtq
     pthread_mutex_t mutex_lock;
 } *Mtq;
 
-typedef void *Data;
-
-// Initializes a new mulit threaded queue
 //
+typedef void *Data;
 
 /**
  * @brief Initializes a new multi threaded queue wrapper
@@ -27,7 +25,28 @@ typedef void *Data;
  */
 extern Mtq mtq_new(int capacity);
 
+/**
+ * @brief Gets the item at the head of the multi threaded queue
+ * @param mtq Multi-thread queue
+ *
+ * @return The head of the queue
+ *
+ */
 extern Data mtq_head_get(Mtq mtq);
+
+/**
+ * @brief Adds the end of the multi thread queue
+ * @param mtq Multi-thread queue
+ * @param d Item to be added to the queue
+ *
+ * @return VOID
+ */
 extern void mtq_tail_put(Mtq mtq, Data d);
 
+/**
+ * @brief Deallocates the multi threaded queue
+ * @param mtq Multi-thread queue
+ *
+ * @return VOID
+ */
 extern void mtq_free(Mtq mtq);

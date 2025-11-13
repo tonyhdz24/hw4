@@ -25,18 +25,13 @@ pthread_t *thread_helper_create(int n, void *(*func)(void *), void *arg)
         // check if the thread creation was successful
         if (thread_creation_status != 0)
         {
-            // TODO user the ERROR.h to handle errors more gracefuly
             ERROR("pthread_create failed");
             return 0;
         }
 
         //      - Store thread ID in array[i]
-        // printf("DEBUG Succesfully Created thread\n");
-        // printf("DEBUG Created thread ID: %lu\n", (unsigned long)threadID);
         threadsIDs[i] = threadID;
     }
-    // printf("DEBUG Succesfully Created thread ID array\n");
-
     return threadsIDs;
 }
 
